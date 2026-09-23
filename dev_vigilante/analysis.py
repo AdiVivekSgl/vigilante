@@ -147,13 +147,16 @@ def extract_py_frappe_apis(script: str) -> list[str]:
 
 # --- SQL ------------------------------------------------------------------------
 
-_SQL_TABLES = re.compile(r"\b(?:from|join)\s+`?tab([A-Za-z][\w ]*?)`?\b", re.IGNORECASE)
+# Backticked names may contain spaces (`tabSales Order`); bare names cannot.
+_SQL_TABLES = re.compile(
+    r"\b(?:from|join)\s+(?:`tab([A-Za-z][^`]*)`|tab([A-Za-z]\w*))", re.IGNORECASE
+)
 _SQL_FILTER_MARKERS = re.compile(r"%\(([A-Za-z_]\w*)\)s|\{([A-Za-z_]\w*)\}")
 
 
 def extract_sql_doctypes(sql: str) -> list[str]:
     """DocTypes referenced via ``tabXYZ`` table names in a query."""
-    return _dedupe(t.strip() for t in _SQL_TABLES.findall(sql or ""))
+    return _dedupe((quoted or bare).strip() for quoted, bare in _SQL_TABLES.findall(sql or ""))
 
 
 def extract_sql_filters(sql: str) -> list[str]:

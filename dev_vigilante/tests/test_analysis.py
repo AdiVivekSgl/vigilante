@@ -50,3 +50,8 @@ def test_sql_helpers():
     sql = "SELECT name FROM `tabSales Order` WHERE status = %(status)s"
     assert "Sales Order" in analysis.extract_sql_doctypes(sql)
     assert "status" in analysis.extract_sql_filters(sql)
+
+
+def test_sql_doctypes_quoted_and_bare():
+    sql = "SELECT * FROM `tabSales Order` so JOIN tabItem i ON i.name = so.item"
+    assert analysis.extract_sql_doctypes(sql) == ["Sales Order", "Item"]
