@@ -1,0 +1,256 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "VS-.YYYY.-.#####",
+ "creation": "2026-07-31 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "status",
+  "trigger_type",
+  "column_break_head",
+  "generated_on",
+  "triggered_by",
+  "export_format",
+  "counts_section",
+  "total_artifacts",
+  "custom_fields_count",
+  "client_scripts_count",
+  "column_break_counts",
+  "server_scripts_count",
+  "custom_doctypes_count",
+  "metrics_section",
+  "generation_duration",
+  "export_size",
+  "export_size_bytes",
+  "column_break_metrics",
+  "changes_added",
+  "changes_removed",
+  "changes_modified",
+  "previous_snapshot",
+  "artifacts_section",
+  "export_file",
+  "changes_markdown",
+  "data_section",
+  "snapshot_json",
+  "changes_json",
+  "error_log"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "read_only": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nIn Progress\nCompleted\nFailed",
+   "read_only": 1
+  },
+  {
+   "default": "Manual",
+   "fieldname": "trigger_type",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Trigger",
+   "options": "Manual\nScheduled\nAPI",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "generated_on",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Generated On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "triggered_by",
+   "fieldtype": "Link",
+   "label": "Triggered By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "export_format",
+   "fieldtype": "Data",
+   "label": "Export Format",
+   "read_only": 1
+  },
+  {
+   "fieldname": "counts_section",
+   "fieldtype": "Section Break",
+   "label": "Inventory"
+  },
+  {
+   "fieldname": "total_artifacts",
+   "fieldtype": "Int",
+   "label": "Total Artifacts",
+   "read_only": 1
+  },
+  {
+   "fieldname": "custom_fields_count",
+   "fieldtype": "Int",
+   "label": "Custom Fields",
+   "read_only": 1
+  },
+  {
+   "fieldname": "client_scripts_count",
+   "fieldtype": "Int",
+   "label": "Client Scripts",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_counts",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "server_scripts_count",
+   "fieldtype": "Int",
+   "label": "Server Scripts",
+   "read_only": 1
+  },
+  {
+   "fieldname": "custom_doctypes_count",
+   "fieldtype": "Int",
+   "label": "Custom DocTypes",
+   "read_only": 1
+  },
+  {
+   "fieldname": "metrics_section",
+   "fieldtype": "Section Break",
+   "label": "Metrics"
+  },
+  {
+   "fieldname": "generation_duration",
+   "fieldtype": "Float",
+   "label": "Generation Duration (s)",
+   "precision": "3",
+   "read_only": 1
+  },
+  {
+   "fieldname": "export_size",
+   "fieldtype": "Data",
+   "label": "Export Size",
+   "read_only": 1
+  },
+  {
+   "fieldname": "export_size_bytes",
+   "fieldtype": "Int",
+   "label": "Export Size (bytes)",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "column_break_metrics",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "changes_added",
+   "fieldtype": "Int",
+   "label": "Added",
+   "read_only": 1
+  },
+  {
+   "fieldname": "changes_removed",
+   "fieldtype": "Int",
+   "label": "Removed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "changes_modified",
+   "fieldtype": "Int",
+   "label": "Modified",
+   "read_only": 1
+  },
+  {
+   "fieldname": "previous_snapshot",
+   "fieldtype": "Link",
+   "label": "Previous Snapshot",
+   "options": "Vigilante Snapshot",
+   "read_only": 1
+  },
+  {
+   "fieldname": "artifacts_section",
+   "fieldtype": "Section Break",
+   "label": "Export"
+  },
+  {
+   "fieldname": "export_file",
+   "fieldtype": "Attach",
+   "label": "Export File",
+   "read_only": 1
+  },
+  {
+   "fieldname": "changes_markdown",
+   "fieldtype": "Markdown Editor",
+   "label": "Changes Since Previous",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "data_section",
+   "fieldtype": "Section Break",
+   "label": "Raw Data"
+  },
+  {
+   "fieldname": "snapshot_json",
+   "fieldtype": "Code",
+   "label": "Snapshot JSON",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "changes_json",
+   "fieldtype": "Code",
+   "label": "Changes JSON",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "error_log",
+   "fieldtype": "Code",
+   "label": "Error Log",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-07-31 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Dev Vigilante",
+ "name": "Vigilante Snapshot",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 0
+}

@@ -1,0 +1,175 @@
+{
+ "actions": [],
+ "creation": "2026-07-31 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "export_section",
+  "default_export_format",
+  "output_directory",
+  "column_break_export",
+  "include_raw_source",
+  "summaries_section",
+  "enable_llm_summaries",
+  "llm_provider",
+  "column_break_llm",
+  "llm_model",
+  "llm_api_key",
+  "scope_section",
+  "include_standard_apps",
+  "include_modules",
+  "exclude_modules",
+  "scheduling_section",
+  "enable_scheduled_snapshots",
+  "schedule_frequency",
+  "column_break_schedule",
+  "retain_snapshots"
+ ],
+ "fields": [
+  {
+   "fieldname": "export_section",
+   "fieldtype": "Section Break",
+   "label": "Export"
+  },
+  {
+   "default": "ZIP",
+   "fieldname": "default_export_format",
+   "fieldtype": "Select",
+   "label": "Default Export Format",
+   "options": "ZIP\nGit-ready folder\nMarkdown only\nJSON only",
+   "description": "Format used when a snapshot is generated without an explicit format."
+  },
+  {
+   "fieldname": "output_directory",
+   "fieldtype": "Data",
+   "label": "Git-ready Output Directory",
+   "description": "Optional filesystem path where the 'Git-ready folder' export is written (server-side). Leave blank to only attach the ZIP to the snapshot record."
+  },
+  {
+   "fieldname": "column_break_export",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "include_raw_source",
+   "fieldtype": "Check",
+   "label": "Include Raw Source",
+   "description": "Include full script/SQL/Jinja source in the export. Disable for a lighter, structure-only snapshot."
+  },
+  {
+   "fieldname": "summaries_section",
+   "fieldtype": "Section Break",
+   "label": "AI Summaries"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_llm_summaries",
+   "fieldtype": "Check",
+   "label": "Enable LLM Summaries",
+   "description": "When off, deterministic heuristic summaries are used (offline, Git-stable). When on, the configured provider generates prose summaries."
+  },
+  {
+   "default": "Anthropic",
+   "depends_on": "enable_llm_summaries",
+   "fieldname": "llm_provider",
+   "fieldtype": "Select",
+   "label": "LLM Provider",
+   "options": "Anthropic\nOpenAI"
+  },
+  {
+   "fieldname": "column_break_llm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "enable_llm_summaries",
+   "fieldname": "llm_model",
+   "fieldtype": "Data",
+   "label": "LLM Model",
+   "description": "e.g. claude-sonnet-5 or gpt-4o-mini."
+  },
+  {
+   "depends_on": "enable_llm_summaries",
+   "fieldname": "llm_api_key",
+   "fieldtype": "Password",
+   "label": "LLM API Key"
+  },
+  {
+   "fieldname": "scope_section",
+   "fieldtype": "Section Break",
+   "label": "Scope"
+  },
+  {
+   "default": "0",
+   "fieldname": "include_standard_apps",
+   "fieldtype": "Check",
+   "label": "Include Standard App Artifacts",
+   "description": "By default only non-vanilla customizations are captured. Enable to also document artifacts owned by standard apps (frappe, erpnext)."
+  },
+  {
+   "fieldname": "include_modules",
+   "fieldtype": "Small Text",
+   "label": "Include Modules",
+   "description": "Optional comma-separated allowlist of module names. Blank = all modules."
+  },
+  {
+   "fieldname": "exclude_modules",
+   "fieldtype": "Small Text",
+   "label": "Exclude Modules",
+   "description": "Optional comma-separated denylist of module names."
+  },
+  {
+   "fieldname": "scheduling_section",
+   "fieldtype": "Section Break",
+   "label": "Scheduling"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_scheduled_snapshots",
+   "fieldtype": "Check",
+   "label": "Enable Scheduled Snapshots",
+   "description": "When on, the scheduler generates snapshots at the chosen frequency."
+  },
+  {
+   "default": "Weekly",
+   "depends_on": "enable_scheduled_snapshots",
+   "fieldname": "schedule_frequency",
+   "fieldtype": "Select",
+   "label": "Schedule Frequency",
+   "options": "Weekly\nMonthly"
+  },
+  {
+   "fieldname": "column_break_schedule",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "20",
+   "fieldname": "retain_snapshots",
+   "fieldtype": "Int",
+   "label": "Retain Snapshots",
+   "description": "Maximum number of Vigilante Snapshot records to keep. 0 = keep all."
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-07-31 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Dev Vigilante",
+ "name": "Vigilante Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
