@@ -18,3 +18,9 @@ Thumbs.db
 # Frappe/local
 *.log
 node_modules/
+
+# Local secrets (Frappe API credentials)
+.env
+.env.*
+!.env.example
+.venv/
