@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import frappe
-
 from dev_vigilante import analysis
 from dev_vigilante.artifact import Artifact
 from dev_vigilante.collectors.base import BaseCollector
@@ -15,9 +13,9 @@ class ClientScriptsCollector(BaseCollector):
     order = 20
 
     def collect(self) -> list[Artifact]:
-        rows = frappe.get_all(
+        rows = self.source.get_all(
             "Client Script",
-            fields=["name", "dt", "view", "enabled", "script", "module"],
+            ["name", "dt", "view", "enabled", "script", "module"],
             order_by="dt asc, name asc",
         )
         artifacts: list[Artifact] = []

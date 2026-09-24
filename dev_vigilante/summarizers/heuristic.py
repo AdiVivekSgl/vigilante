@@ -57,6 +57,20 @@ def _custom_field(a: Artifact) -> str:
     return " ".join(parts)
 
 
+def _property_setter(a: Artifact) -> str:
+    f = a.fields
+    value = str(f.get("value") if f.get("value") is not None else "").splitlines()
+    shown = value[0] if value else ""
+    if len(value) > 1:
+        shown += " …"
+    target = f.get("target")
+    where = f"field “{target}” of {f.get('doctype')}" if target else f"the {f.get('doctype')} DocType"
+    parts = [f"Overrides “{f.get('property')}” on {where}: set to “{shown}”."]
+    if f.get("system_generated"):
+        parts.append("Created by an app or setup routine, not by hand.")
+    return " ".join(parts)
+
+
 def _client_script(a: Artifact) -> str:
     f = a.fields
     state = "enabled" if f.get("enabled") else "disabled"
@@ -159,6 +173,7 @@ def _generic(a: Artifact) -> str:
 
 _HANDLERS = {
     "custom_fields": _custom_field,
+    "property_setters": _property_setter,
     "client_scripts": _client_script,
     "server_scripts": _server_script,
     "custom_doctypes": _custom_doctype,

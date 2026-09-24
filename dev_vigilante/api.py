@@ -159,7 +159,7 @@ def run_snapshot_job(snapshot_name: str) -> dict:
         frappe.db.rollback()
         tb = frappe.get_traceback()
         doc.db_set({"status": "Failed", "error_log": tb}, commit=True)
-        frappe.log_error(tb, "Dev Vigilante snapshot")
+        frappe.log_error(title="Dev Vigilante snapshot", message=tb)
         _notify(doc, {"name": doc.name, "status": "Failed"})
         raise
 
@@ -292,4 +292,4 @@ def _generate_as_system(trigger_type: str):
     try:
         generate_snapshot(trigger_type=trigger_type)
     except Exception:
-        frappe.log_error(frappe.get_traceback(), "Dev Vigilante scheduled snapshot")
+        frappe.log_error(title="Dev Vigilante scheduled snapshot", message=frappe.get_traceback())

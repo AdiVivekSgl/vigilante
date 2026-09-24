@@ -11,6 +11,9 @@ dependencies = [
     # Frappe/ERPNext are provided by the bench environment; do not pin them here.
 ]
 
+[project.scripts]
+vigilante = "dev_vigilante.cli:main"
+
 [build-system]
 requires = ["flit_core >=3.4,<4"]
 build-backend = "flit_core.buildapi"

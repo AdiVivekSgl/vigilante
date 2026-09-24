@@ -31,4 +31,4 @@ class VigilanteSnapshot(Document):
                     frappe.delete_doc("File", file_name, ignore_permissions=True, force=True)
             except Exception:
                 # Deleting the snapshot must not fail because of a missing file.
-                frappe.log_error(frappe.get_traceback(), "Vigilante Snapshot file cleanup")
+                frappe.log_error(title="Vigilante Snapshot file cleanup", message=frappe.get_traceback())

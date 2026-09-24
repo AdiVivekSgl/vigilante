@@ -31,7 +31,7 @@ class Summarizer:
             try:
                 import frappe
 
-                frappe.log_error(frappe.get_traceback(), "Dev Vigilante LLM summarizer")
+                frappe.log_error(title="Dev Vigilante LLM summarizer", message=frappe.get_traceback())
             except Exception:
                 pass
             return base

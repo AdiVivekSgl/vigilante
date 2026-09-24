@@ -11,6 +11,7 @@ from dev_vigilante.collectors.base import BaseCollector, CollectorContext
 from dev_vigilante.collectors.client_scripts import ClientScriptsCollector
 from dev_vigilante.collectors.custom_doctypes import CustomDocTypesCollector
 from dev_vigilante.collectors.custom_fields import CustomFieldsCollector
+from dev_vigilante.collectors.property_setters import PropertySettersCollector
 from dev_vigilante.collectors.server_scripts import ServerScriptsCollector
 from dev_vigilante.collectors.system_info import SystemInfoCollector
 
@@ -18,13 +19,14 @@ from dev_vigilante.collectors.system_info import SystemInfoCollector
 COLLECTOR_CLASSES: list[type[BaseCollector]] = [
     SystemInfoCollector,
     CustomFieldsCollector,
+    PropertySettersCollector,
     ClientScriptsCollector,
     ServerScriptsCollector,
     CustomDocTypesCollector,
 ]
 
 
-def build_collectors(context: CollectorContext) -> list[BaseCollector]:
-    collectors = [cls(context) for cls in COLLECTOR_CLASSES]
+def build_collectors(context: CollectorContext, source) -> list[BaseCollector]:
+    collectors = [cls(context, source) for cls in COLLECTOR_CLASSES]
     collectors.sort(key=lambda c: (c.order, c.key))
     return collectors

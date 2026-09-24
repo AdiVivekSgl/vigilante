@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import frappe
-
 from dev_vigilante.artifact import Artifact
 from dev_vigilante.collectors.base import BaseCollector
 
@@ -30,6 +28,7 @@ _FIELDS = [
     "translatable",
     "precision",
     "permlevel",
+    "is_system_generated",
 ]
 
 
@@ -39,10 +38,8 @@ class CustomFieldsCollector(BaseCollector):
     order = 10
 
     def collect(self) -> list[Artifact]:
-        rows = frappe.get_all(
-            "Custom Field",
-            fields=_FIELDS,
-            order_by="dt asc, idx asc, fieldname asc",
+        rows = self.source.get_all(
+            "Custom Field", _FIELDS, order_by="dt asc, idx asc, fieldname asc"
         )
         artifacts: list[Artifact] = []
         for row in rows:
@@ -72,6 +69,7 @@ class CustomFieldsCollector(BaseCollector):
                 "in_list_view": bool(row.get("in_list_view")),
                 "permlevel": row.get("permlevel"),
                 "module": module,
+                "system_generated": bool(row.get("is_system_generated")),
             }
 
             dependencies = [{"type": "DocType", "name": dt}] if dt else []

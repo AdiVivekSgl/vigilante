@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import frappe
-
 from dev_vigilante import analysis
 from dev_vigilante.artifact import Artifact
 from dev_vigilante.collectors.base import BaseCollector
@@ -29,15 +27,8 @@ class ServerScriptsCollector(BaseCollector):
     order = 30
 
     def collect(self) -> list[Artifact]:
-        if not frappe.db.exists("DocType", "Server Script"):
-            # Server Scripts require server_script_enabled; DocType is always present,
-            # but guard anyway for unusual builds.
-            return []
-
-        rows = frappe.get_all(
-            "Server Script",
-            fields=_FIELDS,
-            order_by="script_type asc, name asc",
+        rows = self.source.get_all(
+            "Server Script", _FIELDS, order_by="script_type asc, name asc"
         )
         artifacts: list[Artifact] = []
         for row in rows:

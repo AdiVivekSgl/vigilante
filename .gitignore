@@ -24,3 +24,9 @@ node_modules/
 .env.*
 !.env.example
 .venv/
+
+.env
+
+# Snapshot output never belongs in this (public) repo
+erpnext-config/
+developer_snapshot/

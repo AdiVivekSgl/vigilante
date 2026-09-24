@@ -1,16 +1,33 @@
 """Collector base class and shared run context.
 
-Collectors are strictly read-only against ERP metadata: they may only read via
-``frappe.get_all`` / ``frappe.get_doc`` / ``frappe.get_meta`` / SELECT queries.
+Collectors are strictly read-only against ERP metadata and never import ``frappe``:
+they read through a :class:`~dev_vigilante.sources.base.Source`, so the same collector
+runs inside a site (bench source) or remotely (REST source).
 """
 
 from __future__ import annotations
 
 from dev_vigilante.artifact import Artifact
 
-# Apps considered "vanilla". Artifacts owned by these are excluded unless the
-# settings opt in via ``include_standard_apps``.
-STANDARD_APPS = {"frappe", "erpnext"}
+# Apps considered "vanilla" (published by Frappe, not written for this site). Artifacts
+# owned by these are excluded unless the settings opt in via ``include_standard_apps``.
+STANDARD_APPS = {
+    "frappe",
+    "erpnext",
+    "hrms",
+    "payments",
+    "lending",
+    "healthcare",
+    "education",
+    "webshop",
+    "crm",
+    "helpdesk",
+    "insights",
+    "wiki",
+    "print_designer",
+    "builder",
+    "lms",
+}
 
 # This app's own module(s) are tooling, not customizations of the ERP; never capture them.
 SELF_APP = "dev_vigilante"
@@ -79,7 +96,10 @@ class CollectorContext:
             return False
         if custom:
             return True
-        return bool(module) and module not in self.standard_modules
+        # Only DocTypes whose owning app is known and non-standard; an unknown module
+        # (e.g. Module Def unreadable over REST) must not pull in every DocType.
+        app = self.app_for_module(module)
+        return bool(app) and app not in STANDARD_APPS and app != SELF_APP
 
     @property
     def include_raw_source(self) -> bool:
@@ -97,8 +117,9 @@ class BaseCollector:
     #: lower runs earlier; keeps snapshot section ordering deterministic.
     order: int = 100
 
-    def __init__(self, context: CollectorContext):
+    def __init__(self, context: CollectorContext, source):
         self.context = context
+        self.source = source
 
     def collect(self) -> list[Artifact]:  # pragma: no cover - interface
         raise NotImplementedError

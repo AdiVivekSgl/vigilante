@@ -15,6 +15,7 @@ from dev_vigilante.exporters.base import Exporter, md_table, safe_filename, yesn
 _LAYOUT = {
     "system_info": ("system", "single"),
     "custom_fields": ("custom_fields", "grouped"),
+    "property_setters": ("property_setters", "grouped"),
     "client_scripts": ("scripts/client", "object"),
     "server_scripts": ("scripts/server", "object"),
     "custom_doctypes": ("doctypes", "object"),
@@ -23,6 +24,7 @@ _LAYOUT = {
 _SECTION_TITLES = {
     "system_info": "System Information",
     "custom_fields": "Custom Fields",
+    "property_setters": "Property Setters",
     "client_scripts": "Client Scripts",
     "server_scripts": "Server Scripts",
     "custom_doctypes": "Custom DocTypes",
@@ -81,7 +83,7 @@ class MarkdownExporter(Exporter):
                     groups.setdefault(a.get("group") or "Ungrouped", []).append(a)
                 for group in sorted(groups):
                     rel = _unique_path(folder, safe_filename(group), used_paths)
-                    files[rel] = self._render_group(group, groups[group])
+                    files[rel] = self._render_group(collector, group, groups[group])
                     index.setdefault(collector, []).append((group, rel))
             else:
                 for a in items:
@@ -157,7 +159,41 @@ class MarkdownExporter(Exporter):
 
     # --- grouped (custom fields) ------------------------------------------------
 
-    def _render_group(self, group: str, items: list) -> str:
+    def _render_group(self, collector: str, group: str, items: list) -> str:
+        if collector == "property_setters":
+            return self._render_property_setters(group, items)
+        return self._render_custom_fields(group, items)
+
+    def _render_property_setters(self, group: str, items: list) -> str:
+        lines = [
+            f"# Property Setters — {group}",
+            "",
+            "Overrides of standard field/DocType properties made through Customize Form.",
+            "",
+        ]
+        rows = []
+        for a in items:
+            f = a.get("fields", {})
+            rows.append(
+                [
+                    f.get("target") or "(DocType)",
+                    f.get("property"),
+                    f.get("value"),
+                    f.get("property_type"),
+                    f.get("applies_to"),
+                    yesno(f.get("system_generated")),
+                ]
+            )
+        lines.append(
+            md_table(
+                ["Field / Row", "Property", "Value", "Type", "Applies To", "System Generated"],
+                rows,
+            )
+        )
+        lines.append("")
+        return "\n".join(lines) + "\n"
+
+    def _render_custom_fields(self, group: str, items: list) -> str:
         lines = [f"# Custom Fields — {group}", ""]
         rows = []
         for a in items:

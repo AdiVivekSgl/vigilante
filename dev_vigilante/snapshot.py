@@ -1,91 +1,34 @@
-"""Snapshot engine — orchestrates collectors, summaries, graph, diff and assembly.
+"""In-site snapshot entry point: runs the shared engine against the bench source.
 
-The engine is read-only against ERP metadata. Persisting the result (creating the
-``Vigilante Snapshot`` record and attaching the export) lives in :mod:`dev_vigilante.api`.
+The engine itself (:mod:`dev_vigilante.engine`) is read-only against ERP metadata.
+Persisting the result (creating the ``Vigilante Snapshot`` record and attaching the
+export) lives in :mod:`dev_vigilante.api`.
 """
 
 from __future__ import annotations
 
-import time
-
 import frappe
 
-import dev_vigilante
-from dev_vigilante import change_detection, dependency, search_index
-from dev_vigilante.collectors.base import CollectorContext
-from dev_vigilante.collectors.registry import build_collectors
+from dev_vigilante import engine
 from dev_vigilante.dev_vigilante.doctype.vigilante_settings.vigilante_settings import (
     get_settings,
 )
-from dev_vigilante.summarizers.base import get_summarizer
+from dev_vigilante.sources.bench import BenchSource
 
 
 class SnapshotEngine:
     def __init__(self, settings=None):
         self.settings = settings or get_settings()
 
-    def _build_context(self) -> CollectorContext:
-        scope = self.settings.get_scope()
-        modules = frappe.get_all("Module Def", fields=["name", "app_name"])
-        app_by_module = {m.name: m.app_name for m in modules}
-        return CollectorContext(scope, app_by_module)
-
     def run(self, previous_snapshot: dict | None = None) -> dict:
-        start = time.monotonic()
-        context = self._build_context()
-        summarizer = get_summarizer(self.settings.get_llm_config())
-        collectors = build_collectors(context)
-
-        artifacts: dict[str, dict] = {}
-        collector_meta: list[dict] = []
-        errors: list[dict] = []
-
-        for collector in collectors:
-            try:
-                items = collector.collect()
-            except Exception:
-                tb = frappe.get_traceback()
-                errors.append({"collector": collector.key, "error": tb})
-                frappe.log_error(tb, f"Dev Vigilante collector: {collector.key}")
-                continue
-
-            for artifact in items:
-                artifact.summary = summarizer.summarize(artifact)
-                artifacts[artifact.key] = artifact.to_dict()
-
-            collector_meta.append(
-                {"key": collector.key, "label": collector.label, "count": len(items)}
-            )
-
-        counts = {m["key"]: m["count"] for m in collector_meta}
-        counts["total"] = len(artifacts)
-
-        graph = dependency.build_dependency_graph(artifacts)
-        search = search_index.build_search_index(artifacts)
-        changes = change_detection.diff(previous_snapshot, {"artifacts": artifacts})
-
-        snapshot = {
-            "meta": {
-                "generator": "Dev Vigilante",
-                "app_version": dev_vigilante.__version__,
-                "generated_on": frappe.utils.now(),
-                "site": getattr(frappe.local, "site", None),
-                "counts": counts,
-            },
-            "collectors": collector_meta,
-            "artifacts": artifacts,
-            "dependency_graph": graph,
-            "search_index": search,
-            "changes": changes,
-        }
-
-        return {
-            "snapshot": snapshot,
-            "counts": counts,
-            "changes": changes,
-            "errors": errors,
-            "duration": round(time.monotonic() - start, 3),
-        }
+        return engine.run(
+            BenchSource(),
+            self.settings.get_scope(),
+            previous_snapshot=previous_snapshot,
+            llm_config=self.settings.get_llm_config(),
+            generated_on=frappe.utils.now(),
+            log_error=lambda tb, title: frappe.log_error(title=title, message=tb),
+        )
 
 
 def get_previous_snapshot_data(exclude_name: str | None = None) -> dict | None:
